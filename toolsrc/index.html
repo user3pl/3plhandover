@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quản lý Đơn hàng</title>
+    <link rel="icon" href="icon.png">
+    <style>
+        /* ... (Phần CSS được giữ nguyên) ... */
+        body {
+            background-color: #F2F2F2;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: #FFFFFF;
+            text-align: left;
+            margin: 0;
+            padding: 0;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .shopee-text-animated {
+            color: #FFFFFF;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        .text-gray-600 {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        label {
+            color: #333;
+            font-weight: bold;
+            margin-right: 5px;
+            margin-left: 10px;
+        }
+        
+        input[type="text"], select, input[type="file"] {
+            background-color: #FDF5E6;
+            border: 1px solid #FFA500;
+            border-radius: 5px;
+            padding: 8px 10px;
+            max-width: 180px;
+        }
+        
+        input[type="file"] {
+            max-width: 250px; 
+            padding: 8px 0;
+        }
+
+        .form-group, .file-input-group {
+            margin-bottom: 10px;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #fff;
+            width: 98%;
+            box-sizing: border-box;
+            display: flex;
+            flex-wrap: wrap; 
+            align-items: center;
+            justify-content: flex-start;
+        }
+        
+        .form-group > *, .file-input-group > * {
+            margin-right: 10px;
+            margin-bottom: 5px;
+        }
+
+        button {
+            background-color: #008CBA;
+            color: #FFFFFF;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        button.upload-button {
+            background-color: #0439f7;
+        }
+
+        button:hover {
+            background-color: #007baf;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 98%;
+            margin-top: 8px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        button.remove-button {
+            background-color: #FF4500;
+            padding: 5px 10px;
+        }
+
+        .table-length {
+            margin-top: 10px;
+            color: black;
+            font-weight: bold;
+            font-size: 120px;
+        }
+        
+        #storageInfo {
+            margin-top: 3px;
+            font-weight: bold;
+            color: #008CBA;
+            width: 98%;
+            background-color: #E0F7FA; 
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #B2EBF2;
+        }
+        
+        #storageInfo ul {
+            list-style: none;
+            margin-left: 0;
+            padding-left: 0;
+            font-weight: normal;
+            font-size: 0.9em;
+            color: #007baf;
+        }
+        
+        #storageInfo ul li {
+            margin-left: 10px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 30px;
+            text-align: center;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        .modal-close {
+            margin-top: 15px;
+            background-color: #FF4500;
+        }
+
+        .history-modal {
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .history-modal p {
+            text-align: left;
+            font-size: 0.95em;
+            margin: 5px 0;
+            padding: 8px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            border-left: 3px solid #008CBA;
+        }
+
+        .config-section {
+            background-color: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.9em;
+        }
+
+        .config-section label {
+            display: block;
+            margin: 5px 0 3px 0;
+            font-weight: bold;
+        }
+
+        .config-section input[type="text"] {
+            width: 110%;
+            max-width: none;
+        }
+
+        /* Header Styling (compact layout) */
+        .header-box {
+            background: linear-gradient(200deg, #fb7a1f 0%, #fa6e23 100%);
+            border-radius: 18px;
+            padding: 40px 20px;
+            width: 96%;
+            margin: 4px auto 6px auto;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-start;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .shopee-icon-small {
+            background-color: rgba(255,255,255,0.12);
+            color: #FFFFFF;
+            width: 48px;
+            height: 48px;
+            border: 2px solid rgba(255,255,255,0.95);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 24px;
+            flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+            transform-origin: center;
+            transition: transform 180ms ease, box-shadow 180ms ease;
+            animation: shopeeIconFloat 2.8s ease-in-out infinite;
+        }
+
+        .shopee-icon-small:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+        }
+
+        @keyframes shopeeIconFloat {
+            0% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-3px) scale(1.02); }
+            100% { transform: translateY(0) scale(1); }
+        }
+
+        .header-title h1 {
+            margin: 0;
+            color: #FFFFFF;
+            font-family: Arial, sans-serif;
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: 0px;
+            text-align: left;
+            line-height: 1.1;
+        }
+
+        .shopee-text-animated {
+            color: #FFFFFF;
+            font-weight: 800;
+            display: inline-block;
+        }
+
+        .header-description {
+            color: #FFFFFF;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            margin: 2px 0 0 58px;
+            line-height: 1;
+            opacity: 0.95;
+            font-weight: 700;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <audio id="errorSound" src="error.mp3" preload="auto"></audio>
+    <audio id="daoSound" src="dao.wav" preload="auto"></audio>
+    <audio id="errorSound" src="error.mp3" preload="auto"></audio>
+    <audio id="trungSound" src="trung.wav" preload="auto"></audio>
+    <audio id="storageTrungSound" src="storageTrung.wav" preload="auto"></audio>
+</head>
+<body>
+    <div class="header-box">
+        <div class="header-title">
+            <div class="shopee-icon-small">S</div>
+            <h1>[VNS] Tools Handover 3pls - Version 2.7</h1>
+        </div>
+        <p class="header-description">Tools được built bởi Nguyễn Trung, có gì thắc mắc liên hệ quoctrung.nguyen@shopee.com.</p>
+    </div>
+    
+    <div class="form-group">
+        <label for="station">Trạm: </label>
+        <input type="text" id="station" placeholder="Nhập mã trạm" onkeypress="istation(event)">
+        <label for="taskId">Task ID: </label>
+        <input type="text" id="taskId" placeholder="Nhập Task ID" onkeypress="itask(event)">
+        <label for="3PL">3PL: </label>
+        <select id="3PL" onchange="onSelect3PL()">
+            <option value="">Chọn một 3PL</option>
+            <option value="Ahamove">Ahamove (21 ký tự hoặc 14 ký tự)</option>
+            <option value="BEST">BEST (14 ký tự)</option>
+            <option value="Giao Hàng Nhanh">Giao Hàng Nhanh (8 ký tự)</option>
+            <option value="AHM CK">AHM CK (8 ký tự)</option>
+            <option value="SPX Express">SPX Express (17 ký tự)</option>
+        </select>
+        <label for="orderCode">Mã đơn hàng: </label>
+        <input type="text" id="orderCode" placeholder="Nhập mã đơn hàng" onkeypress="handleEnterKey(event)" onchange="updateOrderCodeInfo()" oninput="updateOrderCodeInfo()">
+        <span id="orderCodeInfo" style="font-size: 12px; color: #666; margin-left: 10px;"></span>
+        <button onclick="addOrder()">Xác nhận</button>
+        <button onclick="exportToExcel()">Export Excel</button>
+        <button onclick="showHistoryModal()" style="background-color:#ffbf00;">📋 Xem History</button>
+        <button onclick="showConfigModal()" style="background-color:#f10000;">⚙️ Cấu hình</button>
+        <label style="font-weight:normal; margin-left:6px;"><input type="checkbox" id="autoUploadOnExport" checked> Auto Upload khi Export</label>
+    </div>
+    
+    <div class="file-input-group">
+        <label for="storageFile">File Storage: </label>
+        <input type="file" id="storageFile" accept=".xlsx, .xls, .csv" multiple> 
+        <button class="upload-button" onclick="uploadStorageFiles()">Tải file & Kiểm tra</button>
+    </div>
+    <div id="storageInfo">Chưa có file Storage nào được tải lên.</div>
+    
+    <span class="table-length"><span id="orderCount">0</span></span>
+
+    <div id="customAlert" class="modal" onclick="closeCustomAlert()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <p id="customAlertMessage"></p>
+            <button onclick="closeCustomAlert()" class="modal-close">Đóng</button>
+        </div>
+    </div>
+
+    <div id="historyModal" class="modal" onclick="closeHistoryModal()">
+        <div class="modal-content history-modal" onclick="event.stopPropagation()" style="max-width: 1200px;">
+            <h3>Lịch sử quét đơn</h3>
+            <div id="historyContent" style="max-height: 600px; overflow-y: auto; text-align: left;">
+                <table id="historyTable" style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background-color: #f2f2f2;">
+                            <th style="border: 1px solid #ddd; padding: 10px;">Số thứ tự</th>
+                            <th style="border: 1px solid #ddd; padding: 10px;">Trạm làm việc</th>
+                            <th style="border: 1px solid #ddd; padding: 10px;">Task ID</th>
+                            <th style="border: 1px solid #ddd; padding: 10px;">3PL</th>
+                            <th style="border: 1px solid #ddd; padding: 10px;">LM Tracking No</th>
+                            <th style="border: 1px solid #ddd; padding: 10px;">Create Time</th>
+                            <th style="border: 1px solid #ddd; padding: 10px;">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTableBody">
+                    </tbody>
+                </table>
+            </div>
+            <button onclick="closeHistoryModal()" class="modal-close">Đóng</button>
+            <button onclick="clearHistory()" class="modal-close" style="background-color: #FF4500; margin-top: 10px;">Xóa toàn bộ History</button>
+        </div>
+    </div>
+
+    <div id="configModal" class="modal" onclick="closeConfigModal()">
+        <div class="modal-content" onclick="event.stopPropagation()" style="max-width: 700px; text-align: left;">
+            <h3>Cấu hình lưu trữ & Google Sheets</h3>
+            <div class="config-section">
+                <label for="googleSheetsWebhook">Google Sheets Webhook URL (Apps Script):</label>
+                <input type="text" id="googleSheetsWebhook" placeholder="https://script.google.com/macros/s/YOUR_SCRIPT_ID/usercontent" style="width: 100%;">
+                <small style="color: #666; margin-top: 5px; display: block;">Để sync với Google Sheets, bạn cần tạo Google Apps Script webhook.</small>
+            </div>
+            <div class="config-section">
+                <label><input type="checkbox" id="autoSyncHistory" checked> Tự động sync History lên Google Sheets khi thêm đơn</label>
+            </div>
+            <div style="text-align: center; margin-top: 15px;">
+                <button onclick="testGoogleSheetsSync()" style="background-color: #4CAF50; margin-right: 10px;">Test Google Sheets Sync</button>
+                <button onclick="saveConfig()" style="background-color: #008CBA;">Lưu cấu hình</button>
+                <button onclick="closeConfigModal()" class="modal-close">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <table id="orderTable">
+        <thead>
+            <tr>
+                <th>Số thứ tự</th>
+                <th>Trạm làm việc</th>
+                <th>Task ID</th>
+                <th>3PL</th>
+                <th>LM Tracking No</th>
+                <th>Create Time</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <script>
+        let storageOrderCodes = new Set();
+        let loadedFileNames = []; 
+        const storageInfoElement = document.getElementById("storageInfo");
+        
+        // ===== HISTORY & LOCALSTORAGE =====
+        const HISTORY_STORAGE_KEY = 'order_history';
+        const CONFIG_STORAGE_KEY = 'app_config';
+        
+        function saveToHistory(orderData) {
+            try {
+                let history = JSON.parse(localStorage.getItem(HISTORY_STORAGE_KEY) || '[]');
+                const entry = {
+                    timestamp: new Date().toLocaleString(),
+                    station: orderData.station,
+                    taskId: orderData.taskId,
+                    pl3: orderData.pl3,
+                    orderCode: orderData.orderCode,
+                    createTime: orderData.createTime
+                };
+                history.unshift(entry);
+                // Keep last 500 entries
+                if (history.length > 500) history = history.slice(0, 500);
+                localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(history));
+                
+                // Sync to Google Sheets if enabled
+                syncToGoogleSheets(entry);
+            } catch (e) {
+                console.error('Lỗi lưu history:', e);
+            }
+        }
+        
+        function syncToGoogleSheets(entry) {
+            try {
+                const config = JSON.parse(localStorage.getItem(CONFIG_STORAGE_KEY) || '{}');
+                const webhook = config.googleSheetsWebhook;
+                const autoSync = config.autoSyncHistory !== false; // default true
+                
+                if (!autoSync || !webhook) return;
+                
+                fetch(webhook, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(entry)
+                }).catch(e => console.log('Google Sheets sync:', e.message));
+            } catch (e) {
+                console.error('Lỗi sync Google Sheets:', e);
+            }
+        }
+        
+        function showHistoryModal() {
+            try {
+                let history = JSON.parse(localStorage.getItem(HISTORY_STORAGE_KEY) || '[]');
+                const tableBody = document.getElementById('historyTableBody');
+                
+                if (history.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #999; padding: 20px;">Không có dữ liệu history</td></tr>';
+                } else {
+                    tableBody.innerHTML = history.map((h, i) => `
+                        <tr style="border: 1px solid #ddd;">
+                            <td style="border: 1px solid #ddd; padding: 10px;">${i + 1}</td>
+                            <td style="border: 1px solid #ddd; padding: 10px;">${h.station}</td>
+                            <td style="border: 1px solid #ddd; padding: 10px;">${h.taskId}</td>
+                            <td style="border: 1px solid #ddd; padding: 10px;">${h.pl3}</td>
+                            <td style="border: 1px solid #ddd; padding: 10px;"><strong>${h.orderCode}</strong></td>
+                            <td style="border: 1px solid #ddd; padding: 10px;">${h.createTime}</td>
+                            <td style="border: 1px solid #ddd; padding: 10px; text-align: center;">
+                                <button onclick="deleteHistoryEntry(${i})" style="background-color: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">Xóa</button>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+                
+                document.getElementById('historyModal').style.display = 'block';
+            } catch (e) {
+                console.error('Lỗi hiển thị history:', e);
+                showCustomAlert('❌ Lỗi khi tải history');
+            }
+        }
+        
+        function deleteHistoryEntry(index) {
+            if (confirm('Xác nhận xóa dòng này?')) {
+                try {
+                    let history = JSON.parse(localStorage.getItem(HISTORY_STORAGE_KEY) || '[]');
+                    history.splice(index, 1);
+                    localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(history));
+                    showHistoryModal(); // Refresh bảng
+                    showCustomAlert('✅ Đã xóa dòng history');
+                } catch (e) {
+                    console.error('Lỗi xóa history:', e);
+                    showCustomAlert('❌ Lỗi khi xóa');
+                }
+            }
+        }
+        
+        function closeHistoryModal() {
+            document.getElementById('historyModal').style.display = 'none';
+        }
+        
+        function clearHistory() {
+            if (confirm('Xác nhận xóa toàn bộ history?')) {
+                localStorage.removeItem(HISTORY_STORAGE_KEY);
+                showCustomAlert('✅ Đã xóa history');
+                showHistoryModal();
+            }
+        }
+        
+        function showConfigModal() {
+            try {
+                const config = JSON.parse(localStorage.getItem(CONFIG_STORAGE_KEY) || '{}');
+                document.getElementById('googleSheetsWebhook').value = config.googleSheetsWebhook || '';
+                document.getElementById('autoSyncHistory').checked = config.autoSyncHistory !== false;
+                document.getElementById('configModal').style.display = 'block';
+            } catch (e) {
+                console.error('Lỗi tải config:', e);
+            }
+        }
+        
+        function closeConfigModal() {
+            document.getElementById('configModal').style.display = 'none';
+        }
+        
+        function saveConfig() {
+            try {
+                const config = {
+                    googleSheetsWebhook: document.getElementById('googleSheetsWebhook').value.trim(),
+                    autoSyncHistory: document.getElementById('autoSyncHistory').checked
+                };
+                localStorage.setItem(CONFIG_STORAGE_KEY, JSON.stringify(config));
+                showCustomAlert('✅ Cấu hình đã lưu');
+                closeConfigModal();
+            } catch (e) {
+                console.error('Lỗi lưu config:', e);
+                showCustomAlert('❌ Lỗi lưu cấu hình');
+            }
+        }
+        
+        function testGoogleSheetsSync() {
+            try {
+                const webhook = document.getElementById('googleSheetsWebhook').value.trim();
+                if (!webhook) {
+                    showCustomAlert('⚠️ Vui lòng nhập Google Sheets Webhook URL trước');
+                    return;
+                }
+                
+                const testEntry = {
+                    timestamp: new Date().toLocaleString(),
+                    station: 'TEST',
+                    taskId: 'TEST',
+                    pl3: 'TEST',
+                    orderCode: 'TEST_' + Date.now(),
+                    createTime: new Date().toLocaleString()
+                };
+                
+                fetch(webhook, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(testEntry)
+                }).then(() => {
+                    showCustomAlert('✅ Test gửi thành công (check Google Sheet để xác nhận)');
+                }).catch(e => {
+                    showCustomAlert('⚠️ Gửi test, nhưng không thể confirm từ server: ' + e.message);
+                });
+            } catch (e) {
+                showCustomAlert('❌ Lỗi test: ' + e.message);
+            }
+        }
+
+        // Định nghĩa số ký tự cho mỗi 3PL
+        const pl3CharacterLength = {
+            'Ahamove': 'special', // 21 ký tự hoặc 14 ký tự
+            'BEST': 14,
+            'Giao Hàng Nhanh': 8,
+            'AHM CK': 8,
+            'SPX Express': 17
+        };
+
+        function focusAndSelectOrderCode() {
+            const input = document.getElementById("orderCode");
+            input.focus();
+            setTimeout(() => input.select(), 50); 
+        }
+
+        function onSelect3PL() {
+            focusAndSelectOrderCode();
+            updateOrderCodeInfo();
+        }
+
+        function updateOrderCodeInfo() {
+            const selected3PL = document.getElementById("3PL").value;
+            const infoElement = document.getElementById("orderCodeInfo");
+            const orderCode = document.getElementById("orderCode").value.trim();
+            
+            if (!selected3PL) {
+                infoElement.innerHTML = '';
+                return;
+            }
+            
+            if (selected3PL === 'Ahamove') {
+                // Ahamove: 21 ký tự hoặc 14 ký tự
+                const currentLength = orderCode.length;
+                
+                if (currentLength === 0) {
+                    infoElement.innerHTML = `📝 Nhập 21 ký tự hoặc 14 ký tự`;
+                    infoElement.style.color = '#666';
+                } else if (currentLength < 14) {
+                    infoElement.innerHTML = `⚠️ Cần 14 hoặc 21 ký tự, còn cần ${14 - currentLength} (hoặc ${21 - currentLength})`;
+                    infoElement.style.color = '#ff8800';
+                } else if (currentLength === 14) {
+                    infoElement.innerHTML = `✅ Đúng 14 ký tự`;
+                    infoElement.style.color = '#008000';
+                } else if (currentLength < 21) {
+                    infoElement.innerHTML = `⚠️ Cần 21 ký tự, còn cần ${21 - currentLength}`;
+                    infoElement.style.color = '#ff8800';
+                } else if (currentLength === 21) {
+                    infoElement.innerHTML = `✅ Đúng 21 ký tự`;
+                    infoElement.style.color = '#008000';
+                } else {
+                    infoElement.innerHTML = `❌ Quá 21 ký tự (thừa ${currentLength - 21})`;
+                    infoElement.style.color = '#ff0000';
+                }
+            } else {
+                // Các 3PL khác: kiểm tra độ dài cố định
+                const requiredLength = pl3CharacterLength[selected3PL];
+                const currentLength = orderCode.length;
+                
+                if (currentLength === 0) {
+                    infoElement.innerHTML = `📝 Cần ${requiredLength} ký tự`;
+                    infoElement.style.color = '#666';
+                } else if (currentLength < requiredLength) {
+                    infoElement.innerHTML = `⚠️ Cần ${requiredLength} ký tự, còn cần ${requiredLength - currentLength}`;
+                    infoElement.style.color = '#ff8800';
+                } else if (currentLength === requiredLength) {
+                    infoElement.innerHTML = `✅ Đúng ${requiredLength} ký tự`;
+                    infoElement.style.color = '#008000';
+                } else {
+                    infoElement.innerHTML = `❌ Quá ${requiredLength} ký tự (thừa ${currentLength - requiredLength})`;
+                    infoElement.style.color = '#ff0000';
+                }
+            }
+        }
+
+        function isValidOrderCode(orderCode, selected3PL) {
+            if (!selected3PL) return false;
+            
+            if (selected3PL === 'Ahamove') {
+                // Ahamove: 21 ký tự hoặc 14 ký tự (bất kỳ ký tự nào)
+                const length = orderCode.length;
+                return length === 21 || length === 14;
+            } else {
+                // Các 3PL khác: kiểm tra độ dài cố định
+                const requiredLength = pl3CharacterLength[selected3PL];
+                return orderCode.length === requiredLength;
+            }
+        }
+
+        function handleEnterKey(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                addOrder();
+            }
+        }        function processSingleFile(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = new Uint8Array(e.target.result);
+                        const workbook = XLSX.read(data, { type: 'array' });
+                        const firstSheetName = workbook.SheetNames[0];
+                        const worksheet = workbook.Sheets[firstSheetName];
+                        const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+                        let fileCodes = new Set();
+                        let orderCodeColumnIndex = -1;
+                        
+                        const headers = json[0] || [];
+                        const headerNames = headers.map(h => String(h).toUpperCase());
+
+                        orderCodeColumnIndex = headerNames.findIndex(name => name.includes('TRACKING NO') || name.includes('MÃ ĐƠN HÀNG'));
+                        
+                        if (orderCodeColumnIndex === -1) {
+                            orderCodeColumnIndex = 4; 
+                        }
+
+                        const startRow = (orderCodeColumnIndex !== -1 && json.length > 0) ? 1 : 0;
+                        
+                        for (let i = startRow; i < json.length; i++) {
+                            const row = json[i];
+                            const code = row[orderCodeColumnIndex];
+
+                            if (code && String(code).trim() !== "") {
+                                let normalizedCode = String(code).trim().toUpperCase();
+                                
+                                // Chuẩn hóa mã Ahamove: nếu 21 ký tự, lấy 14 ký tự cuối
+                                if (normalizedCode.length === 21 && (normalizedCode.startsWith('SHOPEE_') || normalizedCode.includes('_'))) {
+                                    normalizedCode = normalizedCode.substring(normalizedCode.length - 14);
+                                }
+                                
+                                fileCodes.add(normalizedCode);
+                            }
+                        }
+                        resolve({ name: file.name, count: fileCodes.size, codes: fileCodes });
+                    } catch (error) {
+                        console.error(`Lỗi khi đọc file ${file.name}:`, error);
+                        reject(`Lỗi khi đọc file **${file.name}**. Vui lòng kiểm tra định dạng.`);
+                    }
+                };
+                reader.onerror = function() {
+                    reject(`Lỗi: Không thể đọc file **${file.name}**.`);
+                };
+                reader.readAsArrayBuffer(file);
+            });
+        }
+
+        async function uploadStorageFiles() {
+            const fileInput = document.getElementById('storageFile');
+            const files = Array.from(fileInput.files);
+            
+            if (files.length === 0) {
+                showCustomAlert("Vui lòng chọn ít nhất một file Excel/CSV để tải lên.");
+                playErrorSound();
+                return;
+            }
+
+            storageOrderCodes.clear();
+            loadedFileNames = [];
+            storageInfoElement.innerHTML = `Đang xử lý ${files.length} file...`;
+
+            let totalCodes = 0;
+            let successFileCount = 0;
+            let failureMessages = [];
+
+            const processPromises = files.map(file => processSingleFile(file));
+
+            try {
+                const results = await Promise.allSettled(processPromises);
+
+                results.forEach(result => {
+                    if (result.status === 'fulfilled') {
+                        const { name, count, codes } = result.value;
+                        codes.forEach(code => storageOrderCodes.add(code));
+                        loadedFileNames.push({ name, count }); 
+                        totalCodes = storageOrderCodes.size;
+                        successFileCount++;
+                    } else {
+                        failureMessages.push(result.reason);
+                    }
+                });
+                
+                updateStorageInfoDisplay(successFileCount, totalCodes, failureMessages);
+                focusAndSelectOrderCode();
+
+            } catch (error) {
+                console.error("Lỗi tổng hợp khi xử lý file:", error);
+                showCustomAlert("❌ Lỗi hệ thống khi xử lý các file.");
+                playErrorSound();
+            }
+        }
+        
+        function updateStorageInfoDisplay(successCount, totalCodes, failureMessages) {
+            let htmlContent = '';
+            
+            if (successCount > 0) {
+                htmlContent += `✅ Đã tải thành công **${successCount}/${loadedFileNames.length + failureMessages.length}** file. Tổng cộng có **${totalCodes}** mã đơn Storage.<br>`;
+                
+                htmlContent += 'File đã tải:<ul style="list-style: none; padding-left: 0;">';
+                loadedFileNames.forEach(file => {
+                    htmlContent += `<li>- ${file.name} (${file.count} mã)</li>`;
+                });
+                htmlContent += '</ul>';
+
+                if (failureMessages.length > 0) {
+                    htmlContent += `<div style="color: #FF4500; margin-top: 10px;">⚠️ Lỗi (${failureMessages.length} file):<ul style="color: #FF4500; list-style: disc;">`;
+                    failureMessages.forEach(msg => {
+                        htmlContent += `<li>${msg.replace('Lỗi khi đọc file ', '')}</li>`;
+                    });
+                    htmlContent += '</ul></div>';
+                }
+                
+                showCustomAlert(`Đã tải thành công ${successCount} file. Tổng cộng **${totalCodes}** mã Storage được sử dụng để kiểm tra.`);
+
+            } else {
+                htmlContent = `❌ Không thể tải bất kỳ file nào. Vui lòng thử lại.`;
+                if (failureMessages.length > 0) {
+                     htmlContent += `<div style="color: #FF4500; margin-top: 10px;">Chi tiết lỗi:<ul style="color: #FF4500; list-style: disc;">`;
+                    failureMessages.forEach(msg => {
+                        htmlContent += `<li>${msg.replace('Lỗi khi đọc file ', '')}</li>`;
+                    });
+                    htmlContent += '</ul></div>';
+                }
+                showCustomAlert("❌ Không thể tải bất kỳ file nào. Vui lòng kiểm tra file và thử lại.");
+            }
+            
+            storageInfoElement.innerHTML = htmlContent;
+        }
+
+        function getNormalizedOrderCode(orderCode, selected3PL) {
+            // Hàm này trích xuất 14 ký tự chính để so sánh trùng lặp
+            if (selected3PL === 'Ahamove') {
+                // Ahamove: lấy 14 ký tự cuối (mã chính)
+                // 21 ký tự: SHOPEE_251217JMC73FBP -> lấy 251217JMC73FBP
+                // 14 ký tự: 251217JMC73FBP -> lấy 251217JMC73FBP
+                if (orderCode.length === 21) {
+                    return orderCode.substring(7); // Bỏ 7 ký tự đầu (SHOPEE_)
+                } else if (orderCode.length === 14) {
+                    return orderCode; // Đã là 14 ký tự
+                }
+            }
+            // Các 3PL khác: so sánh chính xác
+            return orderCode;
+        }
+
+        function addOrder() {
+            var stationIdInput = document.getElementById("station");
+            var taskIdInput = document.getElementById("taskId");
+            var orderCodeInput = document.getElementById("orderCode");
+            var pl3Dropdown = document.getElementById("3PL");
+            
+            var stationId = stationIdInput.value.trim();
+            var taskId = taskIdInput.value.trim();
+            var selected3PL = pl3Dropdown.value;
+            var orderCode = orderCodeInput.value.trim().toUpperCase();
+
+            // 1. Kiểm tra các trường bắt buộc
+            if (stationId === "") {
+                showCustomAlert("Vui lòng nhập **Trạm làm việc**.");
+                playErrorSound();
+                stationIdInput.focus();
+                return;
+            }
+            if (taskId === "") {
+                showCustomAlert("Vui lòng nhập **Task ID**.");
+                playErrorSound();
+                taskIdInput.focus();
+                return;
+            }
+            if (selected3PL === "") {
+                showCustomAlert("Vui lòng **chọn 3PL**.");
+                playErrorSound();
+                pl3Dropdown.focus();
+                return;
+            }
+            if (orderCode === "") {
+                showCustomAlert("Vui lòng nhập **Mã đơn hàng**.");
+                playErrorSound();
+                focusAndSelectOrderCode();
+                return;
+            }
+
+            // 2. Kiểm tra định dạng (Regex)
+            if (!isValidOrderCode(orderCode, selected3PL)) {
+                showCustomAlert(`Sai mã đơn hàng. Định dạng **${selected3PL}** không hợp lệ.`);
+                playsaiSound();
+                focusAndSelectOrderCode();
+                return;
+            }
+
+            // Lấy mã chuẩn hóa để so sánh trùng lặp
+            var normalizedCode = getNormalizedOrderCode(orderCode, selected3PL);
+
+            // 3. KIỂM TRA TRÙNG LẶP VỚI FILE STORAGE 
+            if (storageOrderCodes.size > 0 && storageOrderCodes.has(normalizedCode)) {
+                showCustomAlert(`❌ Mã đơn hàng **${orderCode}** ĐÃ TỒN TẠI trong **${storageOrderCodes.size}** mã Storage đã tải.`);
+                playStorageTrungSound(); 
+                focusAndSelectOrderCode();
+                return;
+            }
+
+            // 4. Kiểm tra trùng lặp với danh sách đang nhập
+            var table = document.getElementById("orderTable").getElementsByTagName('tbody')[0];
+            var rows = table.getElementsByTagName('tr');
+            for (var i = 0; i < rows.length; i++) {
+                var existingOrderCode = rows[i].getElementsByTagName('td')[4].innerText;
+                var existingNormalizedCode = getNormalizedOrderCode(existingOrderCode, selected3PL);
+                if (existingNormalizedCode === normalizedCode) {
+                    showCustomAlert(`Mã đơn hàng **${orderCode}** đã tồn tại trong danh sách đang nhập (mã chính: **${normalizedCode}**).`);
+                    playtrungSound();
+                    focusAndSelectOrderCode();
+                    return;
+                }
+            }
+
+            // Thêm đơn hàng nếu OK
+            var currentDate = new Date();
+            // Insert at top so newly scanned orders appear first for easy monitoring
+            var newRow = table.insertRow(0);
+
+            newRow.insertCell(0);
+            newRow.insertCell(1).innerHTML = stationId.toUpperCase();
+            newRow.insertCell(2).innerHTML = taskId.toUpperCase();
+            newRow.insertCell(3).innerHTML = selected3PL;
+            newRow.insertCell(4).innerHTML = orderCode;
+            newRow.insertCell(5).innerHTML = currentDate.toLocaleString();
+            newRow.insertCell(6).innerHTML = '<button class="remove-button" onclick="removeOrder(this)">Xóa</button>';
+
+            // Briefly highlight the new row so it's easy to spot
+            try {
+                newRow.style.transition = 'background-color 0.4s ease';
+                newRow.style.backgroundColor = '#fff7cc';
+                setTimeout(function() { newRow.style.backgroundColor = ''; }, 1400);
+
+                // Scroll the new row into view (center) so it's visible immediately
+                if (newRow.scrollIntoView) newRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } catch (e) {
+                // ignore if scrolling/highlight fails
+            }
+
+            playdaoSound();
+
+            // Save to history & localStorage
+            saveToHistory({
+                station: stationId,
+                taskId: taskId,
+                pl3: selected3PL,
+                orderCode: orderCode,
+                createTime: currentDate.toLocaleString()
+            });
+
+            orderCodeInput.value = "";
+            focusAndSelectOrderCode();
+            updateOrderNumbers();
+            updateOrderCount();
+        }
+        
+        // ===================================================
+        // CẬP NHẬT: Tối ưu hóa hàm phát âm thanh Storage
+        // ===================================================
+
+        function playErrorSound() {
+            const audio = document.getElementById("errorSound");
+            audio.currentTime = 0;
+            audio.play();
+        }
+        function playsaiSound() {
+            const audio = document.getElementById("errorSound");
+            audio.currentTime = 0;
+            audio.play();
+        }
+        function playtrungSound() {
+            const audio = document.getElementById("trungSound");
+            audio.currentTime = 0;
+            audio.play();
+        }
+        
+        // SỬA ĐỔI HÀM NÀY: Dùng cách reset time tương tự các âm thanh khác
+        function playStorageTrungSound() {
+            const audio = document.getElementById("storageTrungSound");
+            audio.currentTime = 0;
+            audio.play();
+        }
+        
+        function playdaoSound() {
+            const audio = document.getElementById("daoSound");
+            audio.currentTime = 0;
+            audio.play();
+        }
+        
+        // ... (Các hàm hỗ trợ khác được giữ nguyên) ...
+
+        function updateOrderCount() {
+            var table = document.getElementById("orderTable").getElementsByTagName('tbody')[0];
+            var rowCount = table.getElementsByTagName('tr').length;
+            document.getElementById("orderCount").innerText = rowCount;
+        }
+
+        function updateOrderNumbers() {
+            var tableRows = document.getElementById("orderTable").getElementsByTagName('tbody')[0].rows;
+            for (var i = 0; i < tableRows.length; i++) {
+                tableRows[i].cells[0].innerText = i + 1; 
+            }
+        }
+
+        function removeOrder(button) {
+            var row = button.parentNode.parentNode;
+            if (confirm("Bạn có muốn xóa Đơn hàng này không?")) {
+                row.parentNode.removeChild(row);
+                updateOrderNumbers();
+                updateOrderCount();
+                focusAndSelectOrderCode();
+            }
+        }
+
+        async function exportToExcel() {
+            if (confirm("Xác nhận chốt file và xóa danh sách đang nhập?")) {
+                var tableBody = document.getElementById("orderTable").getElementsByTagName('tbody')[0];
+                var rows = Array.from(tableBody.getElementsByTagName("tr"));
+                
+                if (rows.length === 0) {
+                    showCustomAlert("Danh sách trống. Vui lòng nhập đơn hàng trước khi xuất file.");
+                    playErrorSound();
+                    return;
+                }
+
+                var taskId = document.getElementById("taskId").value.trim();
+                var stationId = document.getElementById("station").value.trim();
+
+                var data = rows.map(function(row) {
+                    return Array.from(row.getElementsByTagName("td")).slice(0, 6).map(function(cell) {
+                        return cell.innerText;
+                    });
+                });
+                
+                var headerRow = ['Số thứ tự', 'Trạm làm việc', 'Task ID', '3PL', 'LM Tracking No', 'Create Time'];
+                var sheetData = [headerRow, ...data];
+
+                var workbook = XLSX.utils.book_new();
+                var worksheet = XLSX.utils.aoa_to_sheet(sheetData);
+                XLSX.utils.book_append_sheet(workbook, worksheet, "DanhSachDonHang");
+
+                var currentDate = new Date();
+                var dd = String(currentDate.getDate()).padStart(2, '0');
+                var mm = String(currentDate.getMonth() + 1).padStart(2, '0');
+                var hh = String(currentDate.getHours()).padStart(2, '0');
+                var min = String(currentDate.getMinutes()).padStart(2, '0');
+                
+                        var fileName = `${stationId.toUpperCase()}_${taskId.toUpperCase()}_${dd}${mm}_${hh}${min}_${rows.length}.xlsx`;
+
+                        // Generate file as array buffer and blob so we can upload it if configured
+                        var arrayBuf = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+                        var blob = new Blob([arrayBuf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+                        // --- Add exported orders into the in-page File Storage list ---
+                        try {
+                            // 'data' is an array of exported rows (first 6 columns). LM Tracking No is index 4.
+                            const exportedCodes = new Set();
+                            data.forEach(function(r) {
+                                const c = r[4];
+                                if (c && String(c).trim() !== '') exportedCodes.add(String(c).trim().toUpperCase());
+                            });
+
+                            if (exportedCodes.size > 0) {
+                                exportedCodes.forEach(code => storageOrderCodes.add(code));
+                                loadedFileNames.push({ name: fileName, count: exportedCodes.size });
+                                updateStorageInfoDisplay(loadedFileNames.length, storageOrderCodes.size, []);
+                            } else {
+                                // still show an entry with 0 if needed
+                                loadedFileNames.push({ name: fileName, count: 0 });
+                                updateStorageInfoDisplay(loadedFileNames.length, storageOrderCodes.size, []);
+                            }
+                        } catch (err) {
+                            console.error('Lỗi khi cập nhật File Storage nội bộ:', err);
+                        }
+
+                        // Trigger local download as before
+                        XLSX.writeFile(workbook, fileName);
+
+                        // If auto-upload is enabled and endpoint configured, upload file to File Storage
+                        try {
+                            const endpointElement = document.getElementById('fileStorageEndpoint');
+                            const autoUploadChecked = document.getElementById('autoUploadOnExport').checked;
+                            const endpoint = endpointElement ? endpointElement.value.trim() : '';
+
+                            if (autoUploadChecked && endpoint) {
+                                storageInfoElement.innerHTML = `Đang upload "${fileName}" lên File Storage...`;
+                                const uploadResult = await uploadFileToStorage(blob, fileName, endpoint);
+                                if (uploadResult.ok) {
+                                    storageInfoElement.innerHTML = `✅ Đã upload "${fileName}" lên File Storage.`;
+                                    showCustomAlert(`✅ File "${fileName}" đã được upload lên File Storage.`);
+                                } else {
+                                    storageInfoElement.innerHTML = `❌ Lỗi upload: ${uploadResult.message}`;
+                                    showCustomAlert(`❌ Lỗi khi upload file: ${uploadResult.message}`);
+                                }
+                            }
+                        } catch (err) {
+                            console.error('Lỗi khi upload file:', err);
+                            showCustomAlert('❌ Lỗi khi upload file. Xem console để biết chi tiết.');
+                        }
+
+                        tableBody.innerHTML = '';
+                        updateOrderCount();
+                        focusAndSelectOrderCode();
+            }
+        }
+
+                // Helper: upload a generated file blob to a configured endpoint (expects a FormData 'file' field)
+                async function uploadFileToStorage(blob, fileName, endpoint) {
+                    try {
+                        const file = new File([blob], fileName, { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                        const fd = new FormData();
+                        fd.append('file', file);
+
+                        const resp = await fetch(endpoint, {
+                            method: 'POST',
+                            body: fd
+                        });
+
+                        if (!resp.ok) {
+                            const text = await resp.text().catch(() => '');
+                            return { ok: false, message: `HTTP ${resp.status} ${resp.statusText} ${text}` };
+                        }
+
+                        // Try to parse JSON message if present
+                        let json = null;
+                        try { json = await resp.json(); } catch (e) { json = null; }
+                        return { ok: true, message: (json && json.message) ? json.message : 'Uploaded' };
+                    } catch (err) {
+                        return { ok: false, message: err.message || String(err) };
+                    }
+                }
+
+        let alertTimeout = null;
+
+        function showCustomAlert(message, autoCloseDelay = 2000) {
+            // Clear existing timeout nếu có
+            if (alertTimeout) {
+                clearTimeout(alertTimeout);
+            }
+            
+            document.getElementById("customAlertMessage").innerHTML = message;
+            document.getElementById("customAlert").style.display = "block";
+            
+            // Tự động đóng modal sau autoCloseDelay (mặc định 5 giây)
+            alertTimeout = setTimeout(() => {
+                closeCustomAlert();
+            }, autoCloseDelay);
+        }
+
+        function closeCustomAlert() {
+            // Clear timeout nếu modal được đóng thủ công
+            if (alertTimeout) {
+                clearTimeout(alertTimeout);
+                alertTimeout = null;
+            }
+            
+            document.getElementById("customAlert").style.display = "none";
+            focusAndSelectOrderCode();
+        }
+
+        function istation(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                document.getElementById("taskId").focus();
+            }
+        }
+
+        function itask(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                document.getElementById("3PL").focus();
+            }
+        }
+        
+        window.onload = function() {
+            focusAndSelectOrderCode();
+        };
+
+    </script>
+</body>
+</html>
